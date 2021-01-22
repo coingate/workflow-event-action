@@ -7302,7 +7302,6 @@ module.exports = function btoa(str) {
 
 const github = __webpack_require__(469);
 const core = __webpack_require__(470);
-const { execSync } = __webpack_require__(129);
 
 const githubToken = core.getInput('github_token');
 
@@ -7332,9 +7331,7 @@ async function run() {
   core.debug(`sha : ${context.sha}`);
   core.debug(`workflow : ${context.workflow}`);
 
-  let commit = execSync('git log -1 --pretty=format:%B')
-    .toString()
-    .trim();
+  let commit;
 
   if (
     context.eventName === 'issue_comment' &&
@@ -7358,6 +7355,8 @@ async function run() {
     core.debug(`The head commit is: ${commit}`);
   } else if (github.context.eventName === 'push') {
     core.debug(`The head commit is: ${context.payload.head_commit}`);
+
+    commit = context.payload.head_commit.message;
   } else {
     core.setFailed('Event unrecognized');
 
