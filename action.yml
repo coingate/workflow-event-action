@@ -9,11 +9,11 @@ inputs:
 
 outputs:
   ref:
-    description: "Event ref"
+    description: "Event's commit ref"
   sha:
-    description: "Event sha"
+    description: "Event's commit sha"
   commit:
-    description: "Event head commit"
+    description: "Event's commit message"
 
 runs:
   using: 'node12'

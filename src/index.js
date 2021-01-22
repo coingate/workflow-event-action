@@ -1,6 +1,5 @@
 const github = require('@actions/github');
 const core = require('@actions/core');
-const { execSync } = require('child_process');
 
 const githubToken = core.getInput('github_token');
 
@@ -30,9 +29,7 @@ async function run() {
   core.debug(`sha : ${context.sha}`);
   core.debug(`workflow : ${context.workflow}`);
 
-  let commit = execSync('git log -1 --pretty=format:%B')
-    .toString()
-    .trim();
+  let commit;
 
   if (
     context.eventName === 'issue_comment' &&
@@ -56,6 +53,8 @@ async function run() {
     core.debug(`The head commit is: ${commit}`);
   } else if (github.context.eventName === 'push') {
     core.debug(`The head commit is: ${context.payload.head_commit}`);
+
+    commit = context.payload.head_commit.message;
   } else {
     core.setFailed('Event unrecognized');
 
