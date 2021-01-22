@@ -1,7 +1,8 @@
-const github = require("@actions/github");
-const core = require("@actions/core");
+const github = require('@actions/github');
+const core = require('@actions/core');
+const { execSync } = require('child_process');
 
-const githubToken = core.getInput("github_token");
+const githubToken = core.getInput('github_token');
 
 const octokit = new github.GitHub(githubToken);
 
@@ -9,6 +10,17 @@ const { context } = github;
 
 let { ref } = context;
 let { sha } = context;
+
+async function getPullRequest(number) {
+  core.info(`Getting pull request: "${number}".`);
+
+  const { data: pullRequest } = await octokit.pulls.get({
+    ...context.repo,
+    pull_number: number,
+  });
+
+  return pullRequest;
+}
 
 async function run() {
   core.debug(`action : ${context.action}`);
@@ -20,9 +32,12 @@ async function run() {
 
   let commit = execSync('git log -1 --pretty=format:%B')
     .toString()
-    .trim()
+    .trim();
 
-  if (context.eventName === 'issue_comment') {
+  if (
+    context.eventName === 'issue_comment' &&
+    context.payload.issue.pull_request
+  ) {
     const pr = await getPullRequest(context.payload.issue.number);
 
     ref = pr.head.ref;
@@ -41,6 +56,10 @@ async function run() {
     core.debug(`The head commit is: ${commit}`);
   } else if (github.context.eventName === 'push') {
     core.debug(`The head commit is: ${context.payload.head_commit}`);
+  } else {
+    core.setFailed('Event unrecognized');
+
+    return;
   }
 
   core.info('set ref output');
