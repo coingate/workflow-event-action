@@ -32,16 +32,20 @@ async function run() {
   let commit;
 
   if (
-    context.eventName === 'issue_comment' &&
-    context.payload.issue.pull_request
+    (context.eventName === 'issue_comment' &&
+      context.payload.issue.pull_request) ||
+    github.context.eventName.startsWith('pull_request')
   ) {
-    const pr = await getPullRequest(context.payload.issue.number);
+    let pr;
+
+    if (context.eventName === 'issue_comment') {
+      pr = await getPullRequest(context.payload.issue.number);
+    } else {
+      pr = github.context.payload.pull_request;
+    }
 
     ref = pr.head.ref;
     sha = pr.head.sha;
-
-    core.debug(`The PR's head ref is: ${ref}`);
-    core.debug(`The PR's head sha is: ${sha}`);
 
     const { data: commitData } = await octokit.git.getCommit({
       ...context.repo,
@@ -61,13 +65,13 @@ async function run() {
     return;
   }
 
-  core.info('set ref output');
+  core.info(`set ref output to ${ref}`);
   core.setOutput('ref', ref);
 
-  core.info('set sha output');
+  core.info(`set sha output to ${sha}`);
   core.setOutput('sha', sha);
 
-  core.info('set commit output');
+  core.info(`set commit output to ${commit}`);
   core.setOutput('commit', commit);
 }
 
