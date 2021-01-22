@@ -7303,7 +7303,7 @@ module.exports = function btoa(str) {
 const github = __webpack_require__(469);
 const core = __webpack_require__(470);
 
-const githubToken = core.getInput('github_token');
+const githubToken = core.getInput('github-token');
 
 const octokit = new github.GitHub(githubToken);
 

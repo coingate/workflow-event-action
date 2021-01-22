@@ -4,7 +4,7 @@ Correctly parse data on worklow events
 
 ## Inputs
 
-### `github_token`
+### `github-token`
 
 **Required** GitHub token. (e.g. `secrets.GITHUB_TOKEN`).
 
@@ -27,5 +27,5 @@ Event head commit
 ```
 uses: coingate/workflow-event-action@master
 with:
-  github_token: '${{ secrets.GITHUB_TOKEN }}'
+  github-token: '${{ secrets.GITHUB_TOKEN }}'
 ```
