@@ -1,0 +1,20 @@
+name: 'Workflow Event'
+
+description: 'Parses workflow events'
+
+inputs:
+  github-token:
+    description: "GitHub token. (e.g. secrets.GITHUB_TOKEN)"
+    required: true
+
+outputs:
+  ref:
+    description: "Event ref"
+  sha:
+    description: "Event sha"
+  commit:
+    description: "Event head commit"
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
